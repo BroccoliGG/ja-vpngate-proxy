@@ -1,9 +1,11 @@
 # ja-vpngate-proxy
 
-[VPNGate](http://www.vpngate.net/api/iphone/)から日本のVPNサーバだけを抽出し、スコアが高い順に接続します  
+[VPNGate](http://www.vpngate.net/api/iphone/)から日本のVPNサーバだけを抽出し、通信速度が200Mbpsを超えるサーバの中からスコアが高い順に接続します  
 ブラウザのプロキシ設定でlocalhost:8118を設定することで使用できます
 
 > 接続できなかった場合は次にスコアの高いサーバへ順番にフォールバックします
+
+> 速度の条件を満たすサーバが1台も無かった場合は、60秒待ってからサーバ一覧を取得し直します
 
 > また、日本サーバであってもpublic-vpn-から始まるVPN(219.100.37.0/24)は同じ場所からのアクセスになってしまうため除外しました
 
@@ -31,6 +33,13 @@ docker compose up -d --build
 
 ```bash
 PROXY_PORT=18118 docker compose up -d
+```
+
+接続対象とする速度の下限は環境変数 `MIN_SPEED` で変更できます(bps単位、デフォルトは200000000 = 200Mbps)  
+条件が厳しすぎて接続先が見つからない場合は下げてください
+
+```bash
+MIN_SPEED=100000000 docker compose up -d
 ```
 
 ## docker run
