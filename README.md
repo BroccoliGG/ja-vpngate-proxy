@@ -1,7 +1,9 @@
 # ja-vpngate-proxy
 
-[VPNGate](http://www.vpngate.net/api/iphone/)から日本のVPNサーバだけを抽出してランダムに接続します  
+[VPNGate](http://www.vpngate.net/api/iphone/)から日本のVPNサーバだけを抽出し、スコアが高い順に接続します  
 ブラウザのプロキシ設定でlocalhost:8118を設定することで使用できます
+
+> 接続できなかった場合は次にスコアの高いサーバへ順番にフォールバックします
 
 > また、日本サーバであってもpublic-vpn-から始まるVPN(219.100.37.0/24)は同じ場所からのアクセスになってしまうため除外しました
 

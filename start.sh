@@ -14,7 +14,8 @@ function connect {
       line=$(echo $line | cut -d ',' -f 15)
       line=$(echo $line | tr -d '\r')
       openvpn <(echo "$line" | base64 -d) ;
-    done < <(curl -s $VPNGATE_URL | grep ,Japan,JP, | grep -v public-vpn- | sort -R )
+    # sort by Score (3rd field) in descending order, so the best server comes first
+    done < <(curl -s $VPNGATE_URL | grep ,Japan,JP, | grep -v public-vpn- | sort -t ',' -k3,3nr )
     echo end
   done
 }
