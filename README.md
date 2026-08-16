@@ -26,7 +26,11 @@ docker compose up -d
 docker compose down
 ```
 
-ソースからイメージをビルドして起動する場合は `--build` を付けてください
+イメージは GitHub Actions が main への push ごとにビルドして
+[GHCR](https://github.com/BroccoliGG/ja-vpngate-proxy/pkgs/container/ja-vpngate-proxy) に公開しています(linux/amd64 と linux/arm64)
+
+リポジトリ内では `docker-compose.override.yml` が自動で読み込まれ、GHCRのイメージではなく
+手元のソースからのビルドに切り替わります。変更を反映するには `--build` を付けてください
 
 ```bash
 docker compose up -d --build
@@ -55,6 +59,33 @@ PROTO=udp MIN_SPEED=50000000 docker compose up -d
 > `PROTO=udp` と高い `MIN_SPEED` を同時に指定すると該当0台になりやすく、その場合は60秒待機を繰り返して接続できません  
 > `docker compose logs` に `no server matched (...)` が繰り返し出ていたら条件を緩めてください
 
+## サーバで動かす(docker-compose.yml だけを配置する)
+
+`docker-compose.yml` には `build:` を書いていないため、**このファイル1枚をサーバに置くだけ**で動きます
+(`Dockerfile` や `start.sh` を持っていく必要はありません)
+
+```bash
+curl -O https://raw.githubusercontent.com/BroccoliGG/ja-vpngate-proxy/main/docker-compose.yml
+PROTO=udp MIN_SPEED=50000000 docker compose up -d
+```
+
+`IMAGE_TAG` でイメージのタグを固定できます(デフォルトは`latest`)
+
+```bash
+IMAGE_TAG=sha-1234567 docker compose up -d
+```
+
+> **事前準備**: GHCRのパッケージは初回publish時は**private**です  
+> 認証なしで`pull`できるようにするには、リポジトリの Packages ページから
+> Package settings → Change visibility → Public に変更してください  
+> privateのまま使う場合はサーバ側で `docker login ghcr.io` が必要です
+
+> **⚠ セキュリティ**: `ports` の指定は `0.0.0.0`(全インターフェース)に公開されます  
+> グローバルIPを持つサーバでそのまま起動すると**誰でも使えるオープンプロキシ**になります  
+> 外部に晒したくない場合は `docker-compose.yml` の `ports` を `"127.0.0.1:8118:8118"` に変更するか、
+> ファイアウォールで8118番を塞いでください
+> (DockerはiptablesをUFWより手前で操作するため、`ufw deny 8118` が効かないことがあります)
+
 ## docker run
 
 ```bash
@@ -62,7 +93,7 @@ docker run --rm -it \
 --cap-add=NET_ADMIN --device=/dev/net/tun \
 --dns=1.1.1.1 --dns=8.8.8.8 --dns=9.9.9.9 \
 -p 8118:8118 \
-tantantanuki/ja-vpngate-proxy
+ghcr.io/broccoligg/ja-vpngate-proxy
 ```
 
 # 起動確認
