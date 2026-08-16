@@ -7,6 +7,32 @@
 
 # 起動
 
+## docker compose
+
+```bash
+docker compose up -d
+```
+
+停止する場合は以下を実行してください
+
+```bash
+docker compose down
+```
+
+ソースからイメージをビルドして起動する場合は `--build` を付けてください
+
+```bash
+docker compose up -d --build
+```
+
+ホスト側のポートは環境変数 `PROXY_PORT` で変更できます(デフォルトは8118)
+
+```bash
+PROXY_PORT=18118 docker compose up -d
+```
+
+## docker run
+
 ```bash
 docker run --rm -it \
 --cap-add=NET_ADMIN --device=/dev/net/tun \

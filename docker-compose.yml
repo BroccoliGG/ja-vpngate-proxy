@@ -1,0 +1,20 @@
+services:
+  ja-vpngate-proxy:
+    # 公開イメージを使う場合はこのまま、ソースからビルドする場合は
+    # docker compose build (または docker compose up --build) を実行してください
+    image: tantantanuki/ja-vpngate-proxy
+    build: .
+    container_name: ja-vpngate-proxy
+    # OpenVPNがtunデバイスを作成・ルーティングを変更するために必要
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    # VPN接続後もホスト側のDNSに引きずられないように明示的に指定
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+      - 9.9.9.9
+    ports:
+      - "${PROXY_PORT:-8118}:8118"
+    restart: unless-stopped
