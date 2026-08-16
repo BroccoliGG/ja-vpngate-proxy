@@ -17,7 +17,9 @@ services:
       - 9.9.9.9
     ports:
       - "${PROXY_PORT:-8118}:8118"
-    # 接続対象とするVPNサーバの最低速度(bps)。デフォルトは200Mbps
     environment:
+      # 接続対象とするVPNサーバの最低速度(bps)。デフォルトは200Mbps
       MIN_SPEED: "${MIN_SPEED:-200000000}"
+      # 使用するOpenVPNのプロトコル。udp / tcp / any (デフォルトはany)
+      PROTO: "${PROTO:-any}"
     restart: unless-stopped
