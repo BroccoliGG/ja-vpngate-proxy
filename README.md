@@ -1,16 +1,16 @@
 # ja-vpngate-proxy
 
-[VPNGate](http://www.vpngate.net/api/iphone/)から日本のVPNサーバだけを抽出し、通信速度が200Mbpsを超えるサーバの中からスコアが高い順に接続します  
+[VPNGate](http://www.vpngate.net/api/iphone/)から日本のVPNサーバだけを抽出し、通信速度が`MIN_SPEED`(デフォルト200Mbps)以上のサーバの中からスコアが高い順に接続します  
 ブラウザのプロキシ設定でlocalhost:8118を設定することで使用できます
 
 > 接続できなかった場合は次にスコアの高いサーバへ順番にフォールバックします
 
-> 速度の条件を満たすサーバが1台も無かった場合は、60秒待ってからサーバ一覧を取得し直します
+> 条件を満たすサーバが1台も無かった場合は、60秒待ってからサーバ一覧を取得し直します
 
 > また、日本サーバであってもpublic-vpn-から始まるVPN(219.100.37.0/24)は同じ場所からのアクセスになってしまうため除外しました
 
-> OpenVPNのTCP/UDPは、VPNGateが各サーバの設定ファイル(`OpenVPN_ConfigData_Base64`)に埋め込んだ`proto`行をそのまま使うため**サーバごとに異なります**  
-> APIは1サーバにつき1つの設定しか返さないため、このプロキシ側でTCP/UDPを選ぶことはできません(実データではTCPが大半)
+> OpenVPNのTCP/UDPはVPNGateが各サーバの設定ファイル(`OpenVPN_ConfigData_Base64`)に埋め込んだ`proto`行で決まり、**サーバごとに異なります**  
+> `PROTO`で絞り込めますが、`proto`はCSVの列ではなく設定ファイルの中にしか無いため、デコードしてから判定しています
 
 # 起動
 
@@ -44,6 +44,16 @@ PROXY_PORT=18118 docker compose up -d
 ```bash
 MIN_SPEED=100000000 docker compose up -d
 ```
+
+使用するプロトコルは環境変数 `PROTO` で `udp` / `tcp` / `any` から選べます(デフォルトは`any`)
+
+```bash
+PROTO=udp MIN_SPEED=50000000 docker compose up -d
+```
+
+> **注意**: VPNGateの日本サーバはTCPが大半で、UDPは全体の2割程度しかありません  
+> `PROTO=udp` と高い `MIN_SPEED` を同時に指定すると該当0台になりやすく、その場合は60秒待機を繰り返して接続できません  
+> `docker compose logs` に `no server matched (...)` が繰り返し出ていたら条件を緩めてください
 
 ## docker run
 
