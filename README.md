@@ -75,10 +75,9 @@ PROTO=udp MIN_SPEED=50000000 docker compose up -d
 IMAGE_TAG=sha-1234567 docker compose up -d
 ```
 
-> **事前準備**: GHCRのパッケージは初回publish時は**private**です  
-> 認証なしで`pull`できるようにするには、リポジトリの Packages ページから
-> Package settings → Change visibility → Public に変更してください  
-> privateのまま使う場合はサーバ側で `docker login ghcr.io` が必要です
+> パッケージは公開されているため、サーバ側での `docker login` は不要です  
+> もし`pull`が認証エラーになる場合は、リポジトリの Packages ページで
+> Package settings → Change visibility が Public になっているか確認してください
 
 > **⚠ セキュリティ**: `ports` の指定は `0.0.0.0`(全インターフェース)に公開されます  
 > グローバルIPを持つサーバでそのまま起動すると**誰でも使えるオープンプロキシ**になります  
