@@ -1,0 +1,11 @@
+# このファイルはリポジトリ内にいるときだけ自動で読み込まれ、
+# docker-compose.yml のイメージ取得をソースからのビルドに差し替えます。
+#
+#   リポジトリ内     : ローカルのDockerfile/start.shからビルドされる
+#   compose単体運用  : このファイルが無いのでGHCRのイメージがそのまま使われる
+#
+# 手元の変更を反映したいときは --build を付けてください
+#   docker compose up -d --build
+services:
+  ja-vpngate-proxy:
+    build: .

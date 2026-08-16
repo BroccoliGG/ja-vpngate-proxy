@@ -1,9 +1,9 @@
 services:
   ja-vpngate-proxy:
-    # 公開イメージを使う場合はこのまま、ソースからビルドする場合は
-    # docker compose build (または docker compose up --build) を実行してください
-    image: tantantanuki/ja-vpngate-proxy
-    build: .
+    # GitHub Actionsがmainへのpushごとにビルドしてpushしているイメージ
+    # このファイル単体をサーバに置いても動くように build: は書いていない
+    # (リポジトリ内では docker-compose.override.yml がソースビルドに切り替える)
+    image: ghcr.io/broccoligg/ja-vpngate-proxy:${IMAGE_TAG:-latest}
     container_name: ja-vpngate-proxy
     # OpenVPNがtunデバイスを作成・ルーティングを変更するために必要
     cap_add:
